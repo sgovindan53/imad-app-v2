@@ -3,6 +3,7 @@ var morgan = require('morgan');
 var path = require('path');
 var Pool = require('pg').Pool;
 var crypto = require('crypto');
+var bodyParser = require('body-parser');
 
 var config = {
   host: 'db.imad.hasura-app.io',
@@ -14,6 +15,7 @@ var config = {
 
 var app = express();
 app.use(morgan('combined'));
+app.use(bodyParser.json());
 
 app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'ui', 'index.html'));
@@ -31,18 +33,33 @@ app.get('/hash/:input', function(req,res){
     
 })
 
-app.get('/create-user', function(req, res){
-   //this fn will take the  usernaem & password and create an entry in the user table
-   var salt = crypto.geRandomBytes(128).toString('hex');
+
+var pool = new Pool(config);
+//app.get('/create-user', function (req, res) { // this is converted to a post request (see comments @ 14 to 15). . .
+// . . assuming that we will get the username and password from the request body
+   //this fn will take the  username & password and create an entry in the user table
+   
+  app.post('/create-user', function (req, res) {
+  // Q: how to make a post request . . see @ 16.10 . .
+   var username = req.body.username;
+   var password = req.body.password;
+  // Q: where is this data coming in the req.body & what is the format of the data that is coming in . . 
+  //. . we are going to assume t\hat this is a JSON request. If so we will have to tell the express framework . . 
+  // . . to look for these keys (username, password) in the request body . .& that these are JSON . . .
+  // . . for this we have to use the 'body parser' . . suitabel code for this is added . . var bodyParser & in the app.use lines . .
+  // . . see @ 16 . .
+   var salt = crypto.getRandomBytes(128).toString('hex');
    var dbString = hash(password, salt);
    pool.query('INSERT INTO "user" (username, password) VALUES ($1,$2)' [username, dbString], function (err, result){
      if (err) {
          res.status(500).send(err.toString());
      } 
-     
-   }
+     else{
+         res.send('User successfully created: ' +username);
+     }
+   })
    
-})
+});
 // pool connection - to fill
 
 app.get('/ui/style.css', function (req, res) {

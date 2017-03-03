@@ -35,6 +35,7 @@ app.get('/hash/:input', function(req,res){
 
 
 var pool = new Pool(config);
+//create a 'user' table with columns id, username, password
 //app.get('/create-user', function (req, res) { // this is converted to a post request (see comments @ 14 to 15). . .
 // . . assuming that we will get the username and password from the request body
 //this fn will take the  username & password and create an entry in the user table
@@ -46,9 +47,9 @@ var pool = new Pool(config);
   // Q: where is this data coming in the req.body & what is the format of the data that is coming in . . 
   //. . we are going to assume t\hat this is a JSON request. If so we will have to tell the express framework . . 
   // . . to look for these keys (username, password) in the request body . .& that these are JSON . . .
-  // . . for this we have to use the 'body parser' . . suitabel code for this is added . . var bodyParser & in the app.use lines . .
+  // . . for this we have to use the 'body parser' . . suitale code for this is added . . var bodyParser & in the app.use lines . .
   // . . see @ 16 . .
-   var salt = crypto.getRandomBytes(128).toString('hex');
+   var salt = crypto.randomBytes(128).toString('hex');  // 'getRandomByes' function is used to create the salt
    var dbString = hash(password, salt);
    pool.query('INSERT INTO "user" (username, password) VALUES ($1,$2)' [username, dbString], function (err, result){
      if (err) {

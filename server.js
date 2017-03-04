@@ -65,10 +65,10 @@ var pool = new Pool(config);
 
 // now to do the login (Time 21.20). This is also a Post request becos it is going to use the same arguments user name & password  
 // but instead of inserting it into the bdatabase, it will check the value from the database and see whether it is matching
-app.post('/login', fuction (req, res){
+app.post('/login', function (req, res){
    var username = req.body.username;
    var password = req.body.password;  
-   pool.query('SELECT * FROM "user" username = $1' [username], function (err, result){
+   pool.query('SELECT * FROM "user" WHERE username = $1' [username], function (err, result){
      if (err) {
          res.status(500).send(err.toString());
      } 

@@ -61,7 +61,38 @@ var pool = new Pool(config);
    });
    
 });
-// pool connection - to fill
+
+
+// now to do the login (Time 21.20). This is also a Post request becos it is going to use the same arguments user name & password  
+// but instead of inserting it into the bdatabase, it will check the value from the database and see whether it is matching
+app.post('/login', fuction (req, res){
+   var username = req.body.username;
+   var password = req.body.password;  
+   pool.query('SELECT * FROM "user" username = $1' [username], function (err, result){
+     if (err) {
+         res.status(500).send(err.toString());
+     } 
+     else{
+         if(result.rows.length===0){
+             res.send(403).send("Username/password is invalid");
+         }
+         else{
+         //match the password
+         var dbString = result.rows(0).password;
+         var salt = dbString.split($)[2];  //i.e.the 3rd item in the array ['pbkdf2', '10000', salt, hashed.toString('hex')].join('$');
+         var hashedPassword = hash(password, salt); //here we are creating a hash based on the password submitted and teh original salt
+         if hashedPassword === dbString{
+             res.send("Credentials correct");
+         }
+         else{
+            res.send(403).send("Username/password is invalid"); 
+         }
+     }
+   });
+   
+});  
+})
+
 
 app.get('/ui/style.css', function (req, res) {
   res.sendFile(path.join(__dirname, 'ui', 'style.css'));

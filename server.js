@@ -4,6 +4,7 @@ var path = require('path');
 var Pool = require('pg').Pool;
 var crypto = require('crypto');
 var bodyParser = require('body-parser');
+var session = require('express-session');
 
 var config = {
   host: 'db.imad.hasura-app.io',
@@ -11,11 +12,14 @@ var config = {
   database: 'sgovindan53',
   port: '5432',
   password: process.env.DB_PASSWORD
-}
+};
 
 var app = express();
 app.use(morgan('combined'));
 app.use(bodyParser.json());
+app.use(session({
+    
+}));
 
 app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'ui', 'index.html'));
@@ -83,8 +87,10 @@ app.post('/login', function (req, res){
          var hashedPassword = hash(password, salt); //here we are creating a hash based on the password submitted and teh original salt
          if hashedPassword === dbString{
              res.send("Credentials correct");
-         }
-         else{
+             
+             // SET A SESSION USING COOKIES. for this we use the express session library; 
+             // ADD var session = require('express-session');
+         } else{
             res.send(403).send("Username/password is invalid"); 
          }
      }

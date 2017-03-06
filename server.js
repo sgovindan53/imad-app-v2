@@ -78,7 +78,7 @@ app.post('/login', function (req, res){
          }
          else{
          //match the password
-         var dbString = result.rows(0).password;
+         var dbString = result.rows[0].password;
          var salt = dbString.split($)[2];  //i.e.the 3rd item in the array ['pbkdf2', '10000', salt, hashed.toString('hex')].join('$');
          var hashedPassword = hash(password, salt); //here we are creating a hash based on the password submitted and teh original salt
          if hashedPassword === dbString{

@@ -18,7 +18,8 @@ var app = express();
 app.use(morgan('combined'));
 app.use(bodyParser.json());
 app.use(session({
-    
+    secret: 'someRandomSecretValue';
+    cookie: {maxAge; 1000 * 60 * 60 * 24 * 30}
 }));
 
 app.get('/', function (req, res) {
@@ -86,10 +87,18 @@ app.post('/login', function (req, res){
          var salt = dbString.split($)[2];  //i.e.the 3rd item in the array ['pbkdf2', '10000', salt, hashed.toString('hex')].join('$');
          var hashedPassword = hash(password, salt); //here we are creating a hash based on the password submitted and teh original salt
          if hashedPassword === dbString{
+           
+           // SET A SESSION USING COOKIES. for this we use the express session library; 
+             // ADD var session = require('express-session'); this has to be set before the login response
+             
+             
+             req.session.auth = {userId: result.rows[0].id};
+            // set cookie with a session id - that it is randomly generating by itseld.
+            //Internally, on the server side, it maps the session id to an object . .
+            // This object contains a value called auth (auth: user Id)
              res.send("Credentials correct");
              
-             // SET A SESSION USING COOKIES. for this we use the express session library; 
-             // ADD var session = require('express-session');
+             
          } else{
             res.send(403).send("Username/password is invalid"); 
          }

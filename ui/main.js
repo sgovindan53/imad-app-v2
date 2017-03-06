@@ -9,7 +9,6 @@ submit.onclick = function() {
        if (request.readyState === XMLHttpRequest.DONE) {
          //TAKE SOME ACTION
         if (request.status ===200) {
-        console.log("User logged in");
         alert("Logged in successfully");
        } else if (request.status===403) {
            alert("Username/password is incorrect");

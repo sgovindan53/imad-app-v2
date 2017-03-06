@@ -18,8 +18,8 @@ var app = express();
 app.use(morgan('combined'));
 app.use(bodyParser.json());
 app.use(session({
-    secret: 'someRandomSecretValue';
-    cookie: {maxAge; 1000 * 60 * 60 * 24 * 30}
+    secret: 'someRandomSecretValue',
+    cookie: {maxAge: 1000 * 60 * 60 * 24 * 30}
 }));
 
 app.get('/', function (req, res) {
@@ -91,11 +91,14 @@ app.post('/login', function (req, res){
            // SET A SESSION USING COOKIES. for this we use the express session library; 
              // ADD var session = require('express-session'); this has to be set before the login response
              
-             
              req.session.auth = {userId: result.rows[0].id};
-            // set cookie with a session id - that it is randomly generating by itseld.
+             
+            // set cookie with a session id - that it is randomly generating by itself.
             //Internally, on the server side, it maps the session id to an object . .
             // This object contains a value called auth (auth: user Id)
+            // The line 'req.session. . .' ensures that the session id (user id) is saved internally . .
+            // on the server side before the "Credentials correct" response is sent.
+            
              res.send("Credentials correct");
              
              
@@ -106,8 +109,15 @@ app.post('/login', function (req, res){
    });
    
 });  
-})
 
+// to test whether the session id has been created . . 
+app.check('/check-login', function (req, res) {
+    if(req.session && req.session.auth && req.session.auth.userId) {
+        res.send('You are logged in: ' + req.session.auth.userId.toString());
+    } else {
+        res.send('You are not logged in!');
+    }
+});
 
 app.get('/ui/style.css', function (req, res) {
   res.sendFile(path.join(__dirname, 'ui', 'style.css'));

@@ -86,7 +86,7 @@ app.post('/login', function (req, res){
          var dbString = result.rows[0].password;
          var salt = dbString.split($)[2];  //i.e.the 3rd item in the array ['pbkdf2', '10000', salt, hashed.toString('hex')].join('$');
          var hashedPassword = hash(password, salt); //here we are creating a hash based on the password submitted and teh original salt
-         if hashedPassword === dbString{
+         if (hashedPassword === dbString){
            
            // SET A SESSION USING COOKIES. for this we use the express session library; 
              // ADD var session = require('express-session'); this has to be set before the login response
@@ -106,6 +106,7 @@ app.post('/login', function (req, res){
             res.send(403).send("Username/password is invalid"); 
          }
      }
+     } 
    });
    
 });  
